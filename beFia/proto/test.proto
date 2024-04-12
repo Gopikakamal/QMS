@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package fia_status;
+
+message FIAQuery {
+   string json = 1;
+}
+
+message FIAResponse {
+  string json = 1;
+}
+
+service FiaStatusService {
+  rpc GetFiaStatus (FIAQuery) returns (FIAResponse);
+  rpc PostFiaStatus (FIAQuery) returns (FIAResponse);
+  rpc UpdateFiaStatus (FIAQuery) returns (FIAResponse);
+}
+

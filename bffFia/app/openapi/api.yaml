@@ -1,0 +1,270 @@
+openapi: 3.0.0
+info:
+  description: This API is for getting data from db
+  version: "1.1.0"
+  title: HMI QA Inspector
+servers:
+  - url: /qms
+tags:
+  - name: QA Inspection
+    description: Everything about QA Inspection info
+paths:
+  /fetch_records:
+    get:
+      tags:
+        - Get Db Records
+      summary: Get QMS data
+      x-openapi-router-controller: "app.controllers.bff_controller"
+      operationId: "GetFiaStatus"
+      description: Get QMS data for the particular Machine
+      parameters:
+        - in: query
+          name: is_fpi
+          required: true
+          schema:
+            type: boolean
+          description: FPI Flag
+        # - in: query
+        #   name: tenant_id
+        #   schema:
+        #     type: string
+        #   description: Tenant Id
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/qainspection"
+              example:
+                tenant_id: "T001"
+                subtenant_id: "SUB001"
+                machine_no: "M5123"
+                MTS_num: 345699
+                unit_id: "U234"
+                dept_id: "D-1"
+                workorder_id: "734589"
+                opn_num: 5
+                part_num: "789346"
+                part_serial_num: "789346-1"
+                is_fpi_status: true
+                instage_inspection_status: "accept"
+        '400':
+          description: Bad Request
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        '401':
+          description: Unauthorized
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '402':
+          description: Request Failed
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '403':
+          description: Forbidden
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '404':
+          description: Not Found
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '409':
+          description: Conflict
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '429':
+          description: Too Many Requests
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '500':
+          description: Server Errors
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+      # security:
+      #   - qaAuth: []
+
+  /update_records:
+    post:
+      tags:
+        - update Db Records
+      summary: Post QMS data
+      x-openapi-router-controller: "app.controllers.updatebff_controller"
+      operationId: "update_bff"
+      description: Update QMS data for the particular Machine_num,opn_num,part_num,workorder_id
+      summary: Update records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                # tenant_id:
+                #   type: string
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      machine_num:
+                        type: string
+                      workorder_id:
+                        type: string
+                      part_num:
+                        type: string
+                      opn_num:
+                        type: integer
+                      part_serial_num:
+                        type: string
+                      inspected_by:
+                        type: string
+                      is_qms:
+                        type: boolean
+
+
+        #     type: string
+        #   description: inspector_id
+        # - in: query
+        #   name: part_serial_num
+        #   required: true
+        #   schema:
+        #     type: string
+        #   description: part_serial_num
+        # - in: query
+        #   name: is_qms
+        #   required: true
+        #   schema:
+        #     type: boolean
+        #   description: qms flag
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/qainspection"
+              examples:
+                example1:
+                  value:
+                    data: Data updated successfully
+        '400':
+          description: Bad Request
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        '401':
+          description: Unauthorized
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '402':
+          description: Request Failed
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '403':
+          description: Forbidden
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '404':
+          description: Not Found
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '409':
+          description: Conflict
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '429':
+          description: Too Many Requests
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+        '500':
+          description: Server Errors
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CommonError"
+      # security:
+      #   - qaAuth: []
+
+components:
+#   securitySchemes:
+#     qaAuth:
+#       type: http
+#       scheme: bearer
+#       bearerFormat: JWT
+#       x-bearerInfoFunc: util.common_library.bearer_info_func
+  schemas:
+    qainspection:
+      type: object
+      properties:
+        tenant_id:
+          type: string
+        subtenant_id:
+          type: string
+        machine_no:
+          type: string
+        MTS_num:
+          type: integer
+        unit_id:
+          type: string
+        dept_id:
+          type: string
+        workorder_id:
+          type: string
+        opn_num:
+          type: integer
+        part_num:
+          type: string
+        part_serial_num:
+          type: string
+        is_fpi_status:
+          type: boolean
+        instage_inspection_status:
+          type: string
+    CommonError:
+      type: object
+      properties:
+        error:
+          type: string
+    BadRequestError:
+      type: object
+      properties:
+        details:
+          type: string
+        status:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
